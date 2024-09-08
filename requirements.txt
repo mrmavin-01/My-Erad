@@ -1,0 +1,6 @@
+kivy==2.1.0
+kivymd==1.1.1
+cython==0.29.24
+plyer==2.0.0
+pyjnius==1.4.1
+urllib3==1.26.7
