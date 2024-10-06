@@ -27,21 +27,16 @@ jobs:
         with:
           path: .buildozer
           key: ${{ runner.os }}-${{ steps.get-date.outputs.date }}-${{ hashFiles('buildozer.spec') }}
-      
-      - name: Setup Android SDK
-        uses: android-actions/setup-sdk@v3 
-        with:
-          api-levels: '21' 
-          ndk-version: 'r25c'
 
       - name: Build with Buildozer
-        run: |
-          pip install buildozer
-          buildozer android debug
+        uses: ArtemSBulgakov/buildozer-action@v1
+        id: buildozer
+        with:
+          command: buildozer android debug
+          buildozer_version: master
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
           name: package
           path: ${{ steps.buildozer.outputs.filename }}
-          
