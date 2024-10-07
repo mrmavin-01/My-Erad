@@ -1,4 +1,5 @@
 name: CI
+name: CI
 on:
   push:
     branches: [ main ]
@@ -7,6 +8,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      ANDROID_HOME: /storage/emulated/0/Download/platform-tools-latest-windows.zip
     steps:
       - uses: actions/checkout@v2
 
