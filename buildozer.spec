@@ -30,6 +30,8 @@ source.include_exts = py,png,jpg,kv,atlas,gif,wav
 
 # (str) Application versioning (method 1)
 version = 0.1
+# Instead of /storage, use a relative directory like bin/
+build_dir = ./build
 
 # (str) Application versioning (method 2)
 # version.regex = __version__ = ['"](.*)['"]
