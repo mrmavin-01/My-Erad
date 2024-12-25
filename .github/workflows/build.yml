@@ -8,25 +8,28 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      ANDROID_HOME: /home/ubuntu/android-sdk  # Correct path for storing Android SDK
-      ANDROID_SDK_ROOT: /home/ubuntu/android-sdk
+      ANDROID_HOME: $HOME/android-sdk
+      ANDROID_SDK_ROOT: $HOME/android-sdk
 
     steps:
       # Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Install dependencies
+      # Install dependencies and set up Android SDK
       - name: Set up Android SDK
         run: |
-          sudo apt-get update
-          sudo apt-get install -y unzip wget
+          # Create the directory where the Android SDK will be installed
+          mkdir -p $HOME/android-sdk/cmdline-tools
+
+          # Download and unzip Android SDK command line tools
           wget https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip -O android-sdk.zip
-          mkdir -p /home/ubuntu/android-sdk/cmdline-tools
-          unzip -q android-sdk.zip -d /home/ubuntu/android-sdk/cmdline-tools
-          mv /home/ubuntu/android-sdk/cmdline-tools/cmdline-tools /home/ubuntu/android-sdk/cmdline-tools/latest
-          yes | /home/ubuntu/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
-          /home/ubuntu/android-sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-31"
+          unzip -q android-sdk.zip -d $HOME/android-sdk/cmdline-tools
+          mv $HOME/android-sdk/cmdline-tools/cmdline-tools $HOME/android-sdk/cmdline-tools/latest
+
+          # Accept licenses and install platform tools and platforms
+          yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
+          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-31"
 
       # Cache Buildozer global directory
       - name: Cache Buildozer global directory
@@ -40,7 +43,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: .buildozer
-          key: buildozer-${{ github.sha }}-${{ github.ref }}
+          key: buildozer-${{ hashFiles('buildozer.spec') }}-${{ github.sha }}
 
       # Run Buildozer to build APK
       - name: Build with Buildozer
