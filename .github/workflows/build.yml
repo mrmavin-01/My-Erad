@@ -1,35 +1,48 @@
 name: CI
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     env:
-      ANDROID_HOME: /storage/emulated/0/Download/platform-tools-latest-windows.zip
+      ANDROID_HOME: ${{ runner.temp }}/android-sdk  # Corrected ANDROID_HOME path
+      ANDROID_SDK_ROOT: ${{ runner.temp }}/android-sdk
+
     steps:
-      - uses: actions/checkout@v2
+      # Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      # used to cache dependencies with a timeout
-      - name: Get Date
-        id: get-date
+      # Install dependencies
+      - name: Set up Android SDK
         run: |
-          echo "::set-output name=date::$(/bin/date -u "+%Y%m%d")"
-        shell: bash
+          sudo apt-get update
+          sudo apt-get install -y unzip wget
+          wget https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip -O android-sdk.zip
+          mkdir -p $ANDROID_HOME/cmdline-tools
+          unzip -q android-sdk.zip -d $ANDROID_HOME/cmdline-tools
+          mv $ANDROID_HOME/cmdline-tools/cmdline-tools $ANDROID_HOME/cmdline-tools/latest
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-31"
 
+      # Cache Buildozer global directory
       - name: Cache Buildozer global directory
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: .buildozer_global
-          key: buildozer-global-${{ hashFiles('buildozer.spec') }} # Replace with your path
+          key: buildozer-global-${{ runner.os }}-${{ hashFiles('buildozer.spec') }}
 
-      - uses: actions/cache@v2
+      # Cache Buildozer working directory
+      - name: Cache Buildozer working directory
+        uses: actions/cache@v3
         with:
           path: .buildozer
-          key: ${{ runner.os }}-${{ steps.get-date.outputs.date }}-${{ hashFiles('buildozer.spec') }}
+          key: buildozer-${{ runner.os }}-${{ github.ref }}-${{ github.sha }}
 
+      # Run Buildozer to build APK
       - name: Build with Buildozer
         uses: ArtemSBulgakov/buildozer-action@v1
         id: buildozer
@@ -37,8 +50,9 @@ jobs:
           command: buildozer android debug
           buildozer_version: master
 
-      - name: Upload artifacts (updated version)
-        uses: actions/upload-artifact@v3  # Change v2 to v3 (latest version)
+      # Upload the APK as an artifact
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v3
         with:
           name: package
-          path: ${{ steps.buildozer.outputs.filename }}"
+          path: bin/*.apk
