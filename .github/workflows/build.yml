@@ -12,40 +12,35 @@ jobs:
       ANDROID_SDK_ROOT: $HOME/android-sdk
 
     steps:
-      # Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Install dependencies and set up Android SDK
+      # Set Git permissions
+      - name: Set git config permissions
+        run: chmod -R 777 .git
+
+      # Configure Git to trust the repository
+      - name: Configure Git to trust the repository
+        run: git config --global --add safe.directory /home/runner/work/My-Erad/My-Erad
+
+      # Set up Android SDK
       - name: Set up Android SDK
         run: |
-          # Create the directory where the Android SDK will be installed
           mkdir -p $HOME/android-sdk/cmdline-tools
-
-          # Download and unzip Android SDK command line tools
           wget https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip -O android-sdk.zip
           unzip -q android-sdk.zip -d $HOME/android-sdk/cmdline-tools
           mv $HOME/android-sdk/cmdline-tools/cmdline-tools $HOME/android-sdk/cmdline-tools/latest
-
-          # Accept licenses and install platform tools and platforms
           yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
           $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-31"
 
-      # Cache Buildozer global directory
-      - name: Cache Buildozer global directory
-        uses: actions/cache@v3
-        with:
-          path: .buildozer_global
-          key: buildozer-global-${{ hashFiles('buildozer.spec') }}
-
-      # Cache Buildozer working directory
-      - name: Cache Buildozer working directory
+      # Cache Buildozer directories
+      - name: Cache Buildozer directories
         uses: actions/cache@v3
         with:
           path: .buildozer
-          key: buildozer-${{ hashFiles('buildozer.spec') }}-${{ github.sha }}
+          key: buildozer-${{ hashFiles('buildozer.spec') }}
 
-      # Run Buildozer to build APK
+      # Build APK with Buildozer
       - name: Build with Buildozer
         uses: ArtemSBulgakov/buildozer-action@v1
         id: buildozer
