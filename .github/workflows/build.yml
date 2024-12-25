@@ -8,8 +8,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      ANDROID_HOME: ${{ runner.temp }}/android-sdk  # Corrected ANDROID_HOME path
-      ANDROID_SDK_ROOT: ${{ runner.temp }}/android-sdk
+      ANDROID_HOME: $HOME/android-sdk  # Corrected home directory reference
+      ANDROID_SDK_ROOT: $HOME/android-sdk
 
     steps:
       # Checkout the repository
@@ -33,14 +33,14 @@ jobs:
         uses: actions/cache@v3
         with:
           path: .buildozer_global
-          key: buildozer-global-${{ runner.os }}-${{ hashFiles('buildozer.spec') }}
+          key: buildozer-global-${{ hashFiles('buildozer.spec') }}
 
       # Cache Buildozer working directory
       - name: Cache Buildozer working directory
         uses: actions/cache@v3
         with:
           path: .buildozer
-          key: buildozer-${{ runner.os }}-${{ github.ref }}-${{ github.sha }}
+          key: buildozer-${{ hashFiles('buildozer.spec') }}-${{ github.sha }}
 
       # Run Buildozer to build APK
       - name: Build with Buildozer
