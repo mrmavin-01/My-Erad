@@ -101,7 +101,7 @@ fullscreen = 0
 #android.features = android.hardware.usb.host
 
 # (int) Target Android API, should be as high as possible.
-#android.api = 27
+android.api = 33
 
 # (int) Minimum API your APK / AAB will support.
 #android.minapi = 21
@@ -119,7 +119,7 @@ fullscreen = 0
 #android.private_storage = True
 
 # (str) Android NDK directory (if empty, it will be automatically downloaded.)
-android.ndk_path = /storage/emulated/0/Download/platform-tools-latest-windows.zip
+#android.ndk_path = /storage/emulated/0/Download/platform-tools-latest-windows.zip
 
 # (str) Android SDK directory (if empty, it will be automatically downloaded.)
 #android.sdk_path =
