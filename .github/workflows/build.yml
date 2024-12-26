@@ -33,7 +33,12 @@ jobs:
           unzip -q android-sdk.zip -d $HOME/android-sdk/cmdline-tools
           mv $HOME/android-sdk/cmdline-tools/cmdline-tools $HOME/android-sdk/cmdline-tools/latest
           yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
-          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "build-tools;31.0.0" "platforms;android-31"
+          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager \
+            "platform-tools" \
+            "build-tools;31.0.0" \
+            "platforms;android-31" \
+            "build-tools;30.0.3" \
+            "platforms;android-30"
 
       # Cache Buildozer directories to improve performance
       - name: Cache Buildozer directories
@@ -45,7 +50,7 @@ jobs:
             ~/.buildozer
           key: buildozer-${{ hashFiles('buildozer.spec') }}
 
-      # Install Buildozer dependencies
+      # Install Buildozer and dependencies
       - name: Install Buildozer and dependencies
         run: |
           sudo apt update
