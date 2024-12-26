@@ -17,14 +17,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Set Git permissions (if necessary)
-      - name: Set git config permissions
-        run: chmod -R 777 .git
-
-      # Configure Git to trust the repository
-      - name: Configure Git to trust the repository
-        run: git config --global --add safe.directory $GITHUB_WORKSPACE
-
       # Set up Android SDK
       - name: Set up Android SDK
         run: |
@@ -36,11 +28,9 @@ jobs:
           $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager \
             "platform-tools" \
             "build-tools;31.0.0" \
-            "platforms;android-31" \
-            "build-tools;30.0.3" \
-            "platforms;android-30"
+            "platforms;android-31"
 
-      # Cache Buildozer directories to improve performance
+      # Cache Buildozer directories
       - name: Cache Buildozer directories
         uses: actions/cache@v3
         with:
@@ -48,7 +38,7 @@ jobs:
             .buildozer
             .gradle
             ~/.buildozer
-          key: buildozer-${{ hashFiles('buildozer.spec') }}
+          key: buildozer-${{ runner.os }}-${{ hashFiles('buildozer.spec') }}-v2
 
       # Install Buildozer and dependencies
       - name: Install Buildozer and dependencies
