@@ -1,4 +1,4 @@
-name: CI
+name: Build APK
 
 on:
   push:
@@ -13,11 +13,11 @@ jobs:
       ANDROID_SDK_ROOT: $HOME/android-sdk
 
     steps:
-      # Checkout repository
+      # Step 1: Checkout Repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Set up Android SDK
+      # Step 2: Set Up Android SDK
       - name: Set up Android SDK
         run: |
           mkdir -p $HOME/android-sdk/cmdline-tools
@@ -30,7 +30,7 @@ jobs:
             "build-tools;31.0.0" \
             "platforms;android-31"
 
-      # Cache Buildozer directories
+      # Step 3: Cache Buildozer Files
       - name: Cache Buildozer directories
         uses: actions/cache@v3
         with:
@@ -38,9 +38,9 @@ jobs:
             .buildozer
             .gradle
             ~/.buildozer
-          key: buildozer-${{ runner.os }}-${{ hashFiles('buildozer.spec') }}-v2
+          key: buildozer-${{ runner.os }}-${{ hashFiles('buildozer.spec') }}-v3
 
-      # Install Buildozer and dependencies
+      # Step 4: Install Buildozer
       - name: Install Buildozer and dependencies
         run: |
           sudo apt update
@@ -48,11 +48,11 @@ jobs:
           pip install --upgrade pip
           pip install buildozer cython
 
-      # Build APK with Buildozer
-      - name: Build with Buildozer
+      # Step 5: Build APK
+      - name: Build APK with Buildozer
         run: buildozer android debug
 
-      # Upload the APK as an artifact
+      # Step 6: Upload APK Artifact
       - name: Upload APK artifact
         uses: actions/upload-artifact@v3
         with:
