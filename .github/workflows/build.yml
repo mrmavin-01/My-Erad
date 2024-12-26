@@ -1,64 +1,41 @@
-name: Build APK
+name: Build KivyMD APK
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
-    env:
-      ANDROID_HOME: $HOME/android-sdk
-      ANDROID_SDK_ROOT: $HOME/android-sdk
-
     steps:
-      # Step 1: Checkout repository
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    - name: Check out repository
+      uses: actions/checkout@v2
 
-      # Step 2: Set up Android SDK
-      - name: Set up Android SDK
-        run: |
-          # Create directories for Android SDK
-          mkdir -p $HOME/android-sdk/cmdline-tools
-          
-          # Download the stable command line tools (specific version)
-          wget https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip -O android-sdk.zip
-          unzip -q android-sdk.zip -d $HOME/android-sdk/cmdline-tools
-          mv $HOME/android-sdk/cmdline-tools/cmdline-tools $HOME/android-sdk/cmdline-tools/latest
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
 
-          # Automatically accept licenses
-          echo "y" | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
+    - name: Install dependencies
+      run: |
+        pip install --upgrade pip
+        pip install buildozer
+        pip install cython
 
-          # Install the required components
-          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "build-tools;30.0.3" "platforms;android-31"
+    - name: Set up Android SDK
+      run: |
+        mkdir -p $HOME/.buildozer/android/platform
+        cd $HOME/.buildozer/android/platform
+        wget https://dl.google.com/android/repository/commandlinetools-linux-8092744_latest.zip
+        unzip commandlinetools-linux-8092744_latest.zip -d cmdline-tools
+        rm commandlinetools-linux-8092744_latest.zip
+        yes | sdkmanager --sdk_root=$HOME/.buildozer/android/platform cmdline-tools latest
+        yes | sdkmanager --licenses
+        yes | sdkmanager "build-tools;36.0.0-rc3"
+        yes | sdkmanager "extras;google;m2repository"
 
-      # Step 3: Cache Buildozer directories (optional)
-      - name: Cache Buildozer directories
-        uses: actions/cache@v3
-        with:
-          path: |
-            .buildozer
-            .gradle
-            ~/.buildozer
-          key: buildozer-${{ runner.os }}-${{ hashFiles('buildozer.spec') }}-v3
-
-      # Step 4: Install Buildozer and dependencies
-      - name: Install Buildozer and dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y python3-pip python3-venv libffi-dev libssl-dev zlib1g-dev
-          pip install --upgrade pip
-          pip install buildozer cython
-
-      # Step 5: Build APK with Buildozer
-      - name: Build APK with Buildozer
-        run: buildozer android debug
-
-      # Step 6: Upload APK artifact
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: APK
-          path: bin/*.apk
+    - name: Build the APK
+      run: |
+        buildozer android debug
