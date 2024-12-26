@@ -1,4 +1,5 @@
 name: CI
+
 on:
   push:
     branches: [main]
@@ -12,16 +13,17 @@ jobs:
       ANDROID_SDK_ROOT: $HOME/android-sdk
 
     steps:
+      # Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Set Git permissions
+      # Set Git permissions (if necessary)
       - name: Set git config permissions
         run: chmod -R 777 .git
 
       # Configure Git to trust the repository
       - name: Configure Git to trust the repository
-        run: git config --global --add safe.directory /home/runner/work/My-Erad/My-Erad
+        run: git config --global --add safe.directory $GITHUB_WORKSPACE
 
       # Set up Android SDK
       - name: Set up Android SDK
@@ -31,26 +33,33 @@ jobs:
           unzip -q android-sdk.zip -d $HOME/android-sdk/cmdline-tools
           mv $HOME/android-sdk/cmdline-tools/cmdline-tools $HOME/android-sdk/cmdline-tools/latest
           yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
-          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-31"
+          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "build-tools;31.0.0" "platforms;android-31"
 
-      # Cache Buildozer directories
+      # Cache Buildozer directories to improve performance
       - name: Cache Buildozer directories
         uses: actions/cache@v3
         with:
-          path: .buildozer
+          path: |
+            .buildozer
+            .gradle
+            ~/.buildozer
           key: buildozer-${{ hashFiles('buildozer.spec') }}
+
+      # Install Buildozer dependencies
+      - name: Install Buildozer and dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y python3-pip python3-venv libffi-dev libssl-dev zlib1g-dev
+          pip install --upgrade pip
+          pip install buildozer cython
 
       # Build APK with Buildozer
       - name: Build with Buildozer
-        uses: ArtemSBulgakov/buildozer-action@v1
-        id: buildozer
-        with:
-          command: buildozer android debug
-          buildozer_version: master
+        run: buildozer android debug
 
       # Upload the APK as an artifact
       - name: Upload APK artifact
         uses: actions/upload-artifact@v3
         with:
-          name: package
+          name: APK
           path: bin/*.apk
