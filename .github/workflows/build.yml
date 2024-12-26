@@ -2,10 +2,7 @@ name: Build KivyMD APK
 
 on:
   push:
-    branches:
-      - main
-
-jobs:
+    branchesjobs:
   build:
     runs-on: ubuntu-latest
 
@@ -29,12 +26,14 @@ jobs:
         mkdir -p $HOME/.buildozer/android/platform
         cd $HOME/.buildozer/android/platform
         wget https://dl.google.com/android/repository/commandlinetools-linux-8092744_latest.zip
+        mkdir cmdline-tools
         unzip commandlinetools-linux-8092744_latest.zip -d cmdline-tools
         rm commandlinetools-linux-8092744_latest.zip
-        yes | sdkmanager --sdk_root=$HOME/.buildozer/android/platform cmdline-tools latest
-        yes | sdkmanager --licenses
-        yes | sdkmanager "build-tools;36.0.0-rc3"
-        yes | sdkmanager "extras;google;m2repository"
+        export PATH=$PATH:$HOME/.buildozer/android/platform/cmdline-tools/bin
+        yes | $HOME/.buildozer/android/platform/cmdline-tools/bin/sdkmanager --sdk_root=$HOME/.buildozer/android/platform cmdline-tools latest
+        yes | $HOME/.buildozer/android/platform/cmdline-tools/bin/sdkmanager --licenses
+        yes | $HOME/.buildozer/android/platform/cmdline-tools/bin/sdkmanager "build-tools;36.0.0-rc3"
+        yes | $HOME/.buildozer/android/platform/cmdline-tools/bin/sdkmanager "extras;google;m2repository"
 
     - name: Build the APK
       run: |
