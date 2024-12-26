@@ -23,21 +23,18 @@ jobs:
           # Create directories for Android SDK
           mkdir -p $HOME/android-sdk/cmdline-tools
           
-          # Download command line tools
+          # Download the stable command line tools (specific version)
           wget https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip -O android-sdk.zip
           unzip -q android-sdk.zip -d $HOME/android-sdk/cmdline-tools
           mv $HOME/android-sdk/cmdline-tools/cmdline-tools $HOME/android-sdk/cmdline-tools/latest
 
-          # Accept all licenses automatically
-          yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
+          # Automatically accept licenses
+          echo "y" | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
 
-          # Install required SDK components
-          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager \
-            "platform-tools" \
-            "build-tools;30.0.3" \
-            "platforms;android-31"
+          # Install the required components
+          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "build-tools;30.0.3" "platforms;android-31"
 
-      # Step 3: Cache Buildozer directories
+      # Step 3: Cache Buildozer directories (optional)
       - name: Cache Buildozer directories
         uses: actions/cache@v3
         with:
