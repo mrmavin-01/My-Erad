@@ -39,7 +39,7 @@ build_dir = ./build
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-requirements = python3,kivy,kivymd,urllib3,plyer,jnius,cython
+requirements = python3,kivy,kivymd,urllib3,plyer,jnius
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
@@ -75,7 +75,7 @@ osx.kivy_version = 1.9.1
 #
 
 # (bool) Indicate if the application should be fullscreen or not
-fullscreen = 0
+fullscreen = False
 
 # (string) Presplash background color (for android toolchain)
 # Supported formats are: #RRGGBB #AARRGGBB or one of the following names:
@@ -95,7 +95,7 @@ fullscreen = 0
 #icon.adaptive_background.filename = %(source.dir)s/data/icon_bg.png
 
 # (list) Permissions
-#android.permissions = INTERNET
+android.permissions = INTERNET
 
 # (list) features (adds uses-feature -tags to manifest)
 #android.features = android.hardware.usb.host
@@ -109,7 +109,7 @@ android.minapi = 21
 android.sdk_build_tools = 31.0.0
 
 # (int) Android SDK version to use
-#android.sdk = 20
+android.sdk = 31
 
 # (str) Android NDK version to use
 #android.ndk = 19b
