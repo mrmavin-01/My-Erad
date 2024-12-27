@@ -1,9 +1,5 @@
 from urllib import request
-from kivy.network.urlrequest import UrlRequest
-from kivy.clock import Clock
-from kivy.uix.carousel import Carousel
 from kivymd.uix.button import MDFillRoundFlatButton
-#from kivy.uix.image import Image
 from kivy.lang import Builder
 from kivymd.uix.bottomsheet import MDBottomSheet
 from kivymd.app import MDApp
@@ -15,7 +11,6 @@ from kivymd.uix.dialog import MDDialog
 from kivy.utils import platform
 from kivy.clock import mainthread
 from jnius import autoclass
-from plyer import vibrator
 from kivy.core.audio import SoundLoader
 
 
