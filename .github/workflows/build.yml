@@ -50,17 +50,18 @@ jobs:
           sudo apt install -y python3-pip python3-venv libffi-dev libssl-dev zlib1g-dev
           pip install --upgrade pip
           pip install buildozer cython
-          pip install python-for-android==2023.9.16  # Updated to a compatible version
+          pip install python-for-android==2023.9.16  # Using a specific version of python-for-android
 
       # Step 6: Ensure python-for-android Directory
       - name: Ensure python-for-android Directory
-        run: mkdir -p .buildozer/android/platform/python-for-android
+        run: |
+          mkdir -p .buildozer/android/platform/python-for-android
 
       # Step 7: Build APK with Buildozer (Verbose)
       - name: Build APK with Buildozer (Verbose)
         run: |
-          buildozer -v android clean
-          buildozer -v android debug | tee build_output.log
+          buildozer android clean
+          buildozer android debug -v | tee build_output.log
         continue-on-error: true  # Allow the build to continue even if errors occur, for log analysis
 
       # Step 8: Upload Build Logs
