@@ -53,7 +53,7 @@ jobs:
           sudo apt install -y python3-pip python3-venv libffi-dev libssl-dev zlib1g-dev
           pip install --upgrade pip
           pip install buildozer cython
-          pip install python-for-android==2023.2.28  # Pinning to stable version
+          pip install python-for-android==2023.2.10  # Updated to a valid version
 
       # Step 6: Ensure python-for-android Directory
       - name: Ensure python-for-android Directory
