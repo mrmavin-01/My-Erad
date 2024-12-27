@@ -39,7 +39,7 @@ build_dir = ./build
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-requirements = python3,kivymd,plyer,jnius
+requirements = python3,kivy,kivymd,jnius
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
