@@ -112,7 +112,7 @@ android.permissions = INTERNET,VIBRATE
 #android.sdk = 31
 
 # (str) Android NDK version to use
-android.ndk = 25b
+#android.ndk = 25b
 
 # (int) Android NDK API to use. This is the minimum API your app will support, it should usually match android.minapi.
 #android.ndk_api = 21
@@ -288,7 +288,7 @@ android.allow_backup = True
 # android.no-compile-pyo = True
 
 # (str) The format used to package the app for release mode (aab or apk).
-# android.release_artifact = aab
+android.release_artifact = apk
 
 #
 # Python for android (p4a) specific
@@ -390,7 +390,7 @@ warn_on_root = 1
 # build_dir = ./.buildozer
 
 # (str) Path to build output (i.e. .apk, .aab, .ipa) storage
-bin_dir = ./bin
+#bin_dir = ./bin
 
 #    -----------------------------------------------------------------------------
 #    List as sections
