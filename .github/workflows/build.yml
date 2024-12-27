@@ -53,10 +53,13 @@ jobs:
           sudo apt install -y python3-pip python3-venv libffi-dev libssl-dev zlib1g-dev
           pip install --upgrade pip
           pip install buildozer cython
+          pip install --upgrade python-for-android
 
       # Step 5: Build APK with Buildozer
       - name: Build APK with Buildozer
-        run: buildozer android debug
+        run: |
+          buildozer android clean
+          buildozer android debug
 
       # Step 6: Upload APK artifact
       - name: Upload APK artifact
