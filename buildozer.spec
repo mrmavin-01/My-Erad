@@ -109,7 +109,7 @@ android.permissions = INTERNET,VIBRATE
 #android.sdk_build_tools = 31.0.0
 
 # (int) Android SDK version to use
-android.sdk = 31
+#android.sdk = 31
 
 # (str) Android NDK version to use
 android.ndk = 25b
