@@ -17,7 +17,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 2: Install Java JDK (if not already installed)
+      # Step 2: Install Java JDK
       - name: Install Java JDK
         run: |
           sudo apt update
@@ -34,6 +34,7 @@ jobs:
           yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools"
           yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "build-tools;30.0.3"
           yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platforms;android-31"
+          yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "ndk;21.4.7075529"
 
       # Step 4: Cache Buildozer directories (optional)
       - name: Cache Buildozer directories
@@ -52,7 +53,7 @@ jobs:
           sudo apt install -y python3-pip python3-venv libffi-dev libssl-dev zlib1g-dev
           pip install --upgrade pip
           pip install buildozer cython
-          pip install --upgrade python-for-android
+          pip install python-for-android==2023.2.28  # Pinning to stable version
 
       # Step 6: Ensure python-for-android Directory
       - name: Ensure python-for-android Directory
@@ -62,9 +63,17 @@ jobs:
       - name: Build APK with Buildozer (Verbose)
         run: |
           buildozer -v android clean
-          buildozer -v android debug
+          buildozer -v android debug | tee build_output.log
+        continue-on-error: true
 
-      # Step 8: Upload APK artifact
+      # Step 8: Upload Build Logs
+      - name: Upload Build Logs
+        uses: actions/upload-artifact@v3
+        with:
+          name: Build Logs
+          path: build_output.log
+
+      # Step 9: Upload APK artifact
       - name: Upload APK artifact
         uses: actions/upload-artifact@v3
         with:
