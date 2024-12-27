@@ -17,26 +17,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 2: Set up Android SDK
+      # Step 2: Free up disk space
+      - name: Free up disk space
+        run: sudo apt-get clean && sudo rm -rf /var/lib/apt/lists/*
+
+      # Step 3: Install Java JDK
+      - name: Install Java JDK
+        run: sudo apt install -y openjdk-11-jdk
+
+      # Step 4: Set up Android SDK
       - name: Set up Android SDK
         run: |
-          # Create directories for Android SDK
           mkdir -p $HOME/android-sdk/cmdline-tools
-          
-          # Download the stable command line tools (specific version)
           wget https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip -O android-sdk.zip
           unzip -q android-sdk.zip -d $HOME/android-sdk/cmdline-tools
           mv $HOME/android-sdk/cmdline-tools/cmdline-tools $HOME/android-sdk/cmdline-tools/latest
-
-          # Automatically accept licenses
           yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
-
-          # Install the required components
           yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools"
           yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "build-tools;30.0.3"
           yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platforms;android-31"
 
-      # Step 3: Cache Buildozer directories (optional)
+      # Step 5: Cache Buildozer directories (optional)
       - name: Cache Buildozer directories
         uses: actions/cache@v3
         with:
@@ -46,7 +47,7 @@ jobs:
             ~/.buildozer
           key: buildozer-${{ runner.os }}-${{ hashFiles('buildozer.spec') }}-v3
 
-      # Step 4: Install Buildozer and dependencies
+      # Step 6: Install Buildozer and dependencies
       - name: Install Buildozer and dependencies
         run: |
           sudo apt update
@@ -55,13 +56,17 @@ jobs:
           pip install buildozer cython
           pip install --upgrade python-for-android
 
-      # Step 5: Build APK with Buildozer
+      # Step 7: Fix permissions
+      - name: Fix permissions
+        run: chmod -R 777 .buildozer
+
+      # Step 8: Build APK with Buildozer
       - name: Build APK with Buildozer
         run: |
-          buildozer android clean
-          buildozer android debug
+          buildozer -v android clean
+          buildozer -v android debug
 
-      # Step 6: Upload APK artifact
+      # Step 9: Upload APK artifact
       - name: Upload APK artifact
         uses: actions/upload-artifact@v3
         with:
