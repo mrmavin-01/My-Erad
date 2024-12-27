@@ -112,7 +112,7 @@ android.sdk_build_tools = 31.0.0
 android.sdk = 31
 
 # (str) Android NDK version to use
-#android.ndk = 19b
+android.ndk = 25b
 
 # (int) Android NDK API to use. This is the minimum API your app will support, it should usually match android.minapi.
 #android.ndk_api = 21
