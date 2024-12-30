@@ -16,7 +16,7 @@ jobs:
     steps:
       # Step 1: Install tar without sudo
       - name: Install tar
-        run: apt-get update && apt-get install -y tar
+        run: sudo apt-get update && apt-get install -y tar
 
       # Step 2: Checkout repository
       - name: Checkout repository
