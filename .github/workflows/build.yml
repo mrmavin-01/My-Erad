@@ -14,18 +14,22 @@ jobs:
       PATH: $ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
 
     steps:
-      # Step 1: Checkout repository
+      # Step 1: Install tar
+      - name: Install tar
+        run: sudo apt-get update && sudo apt-get install -y tar
+
+      # Step 2: Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 2: Set up Java JDK
+      # Step 3: Set up Java JDK
       - name: Setup Java JDK
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      # Step 3: Set up Android SDK
+      # Step 4: Set up Android SDK
       - name: Set up Android SDK
         run: |
           mkdir -p $HOME/android-sdk/cmdline-tools
@@ -39,7 +43,7 @@ jobs:
             "platforms;android-33" \
             "ndk;23.1.7779620"
 
-      # Step 4: Cache Buildozer directories (optional)
+      # Step 5: Cache Buildozer directories (optional)
       - name: Cache Buildozer directories
         uses: actions/cache@v3
         with:
@@ -49,7 +53,7 @@ jobs:
             ~/.buildozer
           key: buildozer-${{ runner.os }}-${{ hashFiles('buildozer.spec') }}-v3
 
-      # Step 5: Setup Python and Install Buildozer
+      # Step 6: Setup Python and Install Buildozer
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
@@ -60,21 +64,21 @@ jobs:
           python -m pip install --upgrade pip
           pip install buildozer cython python-for-android
 
-      # Step 6: Build APK with Buildozer
+      # Step 7: Build APK with Buildozer
       - name: Build APK with Buildozer
         run: |
           buildozer android clean
           buildozer android debug -v | tee build_output.log
         continue-on-error: false  # Fail the build on errors
 
-      # Step 7: Upload Build Logs
+      # Step 8: Upload Build Logs
       - name: Upload Build Logs
         uses: actions/upload-artifact@v3
         with:
           name: Build Logs
           path: build_output.log
 
-      # Step 8: Upload APK artifact
+      # Step 9: Upload APK artifact
       - name: Upload APK artifact
         uses: actions/upload-artifact@v3
         with:
