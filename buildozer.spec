@@ -11,6 +11,8 @@ package.domain = org.erad.app
 # (str) Version of your application
 version = 1.0.0
 
+source.dir =.
+
 # (list) Application requirements
 # Comma separated list of requirements
 # The main dependencies are kivy, kivymd, and jnius (for Android interaction)
