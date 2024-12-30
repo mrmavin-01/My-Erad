@@ -12,7 +12,8 @@ jobs:
 
       # Clear Git config if needed
       - name: Clear Git config
-        run: git config --global --unset-all http.https://github.com/.extraheader
+        run: |
+          git config --global --get http.https://github.com/.extraheader && git config --global --unset-all http.https://github.com/.extraheader || echo "No extraheader to unset"
 
       # used to cache dependencies with a timeout
       - name: Get Date
