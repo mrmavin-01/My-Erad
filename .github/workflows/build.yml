@@ -14,23 +14,18 @@ jobs:
       PATH: $ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
 
     steps:
-      # Step 1: Install required tools (tar and others)
-      - name: Install required tools
-        run: |
-          apt update
-          apt install -y tar
-
-      # Step 2: Checkout repository
+      # Step 1: Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 3: Install Java JDK (Java 17 for compatibility)
-      - name: Install Java JDK
-        run: |
-          apt update
-          apt install -y openjdk-17-jdk
+      # Step 2: Install Java JDK
+      - name: Setup Java JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
 
-      # Step 4: Set up Android SDK
+      # Step 3: Set up Android SDK
       - name: Set up Android SDK
         run: |
           mkdir -p $HOME/android-sdk/cmdline-tools
@@ -44,7 +39,7 @@ jobs:
             "platforms;android-33" \
             "ndk;23.1.7779620"
 
-      # Step 5: Cache Buildozer directories (optional)
+      # Step 4: Cache Buildozer directories (optional)
       - name: Cache Buildozer directories
         uses: actions/cache@v3
         with:
@@ -54,35 +49,32 @@ jobs:
             ~/.buildozer
           key: buildozer-${{ runner.os }}-${{ hashFiles('buildozer.spec') }}-v3
 
-      # Step 6: Install Buildozer and dependencies
+      # Step 5: Install Python and Buildozer
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
       - name: Install Buildozer and dependencies
         run: |
-          apt update
-          apt install -y python3-pip python3-venv libffi-dev libssl-dev zlib1g-dev
-          pip install --upgrade pip
-          pip install buildozer cython
-          pip install python-for-android
+          python -m pip install --upgrade pip
+          pip install buildozer cython python-for-android
 
-      # Step 7: Ensure python-for-android Directory
-      - name: Ensure python-for-android Directory
-        run: |
-          mkdir -p .buildozer/android/platform/python-for-android
-
-      # Step 8: Build APK with Buildozer (Verbose)
+      # Step 6: Build APK with Buildozer
       - name: Build APK with Buildozer
         run: |
           buildozer android clean
           buildozer android debug -v | tee build_output.log
         continue-on-error: true  # Allow the build to continue even if errors occur, for log analysis
 
-      # Step 9: Upload Build Logs
+      # Step 7: Upload Build Logs
       - name: Upload Build Logs
         uses: actions/upload-artifact@v3
         with:
           name: Build Logs
           path: build_output.log
 
-      # Step 10: Upload APK artifact
+      # Step 8: Upload APK artifact
       - name: Upload APK artifact
         uses: actions/upload-artifact@v3
         with:
