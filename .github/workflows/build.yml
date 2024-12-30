@@ -20,7 +20,7 @@ jobs:
       - name: Upgrade pip and install dependencies
         run: |
           /bin/python3 -m pip install --upgrade pip
-          /bin/python3 -m pip install -q --user appdirs colorama>=0.3.3 jinja2 sh>=1.10, <2.0; sys_platform!="win32" build toml packaging setuptools
+          /bin/python3 -m pip install -q --user appdirs colorama>=0.3.3 jinja2 'sh>=1.10, <2.0' build toml packaging setuptools
 
       - name: Cache Buildozer global directory
         uses: actions/cache@v2
