@@ -18,7 +18,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 2: Install Java JDK
+      # Step 2: Set up Java JDK
       - name: Setup Java JDK
         uses: actions/setup-java@v3
         with:
@@ -49,7 +49,7 @@ jobs:
             ~/.buildozer
           key: buildozer-${{ runner.os }}-${{ hashFiles('buildozer.spec') }}-v3
 
-      # Step 5: Install Python and Buildozer
+      # Step 5: Setup Python and Install Buildozer
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
@@ -65,7 +65,7 @@ jobs:
         run: |
           buildozer android clean
           buildozer android debug -v | tee build_output.log
-        continue-on-error: true  # Allow the build to continue even if errors occur, for log analysis
+        continue-on-error: false  # Fail the build on errors
 
       # Step 7: Upload Build Logs
       - name: Upload Build Logs
