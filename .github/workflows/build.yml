@@ -17,8 +17,8 @@ jobs:
       # Step 1: Install required tools (tar and others)
       - name: Install required tools
         run: |
-          sudo apt update
-          sudo apt install -y tar
+          apt update
+          apt install -y tar
 
       # Step 2: Checkout repository
       - name: Checkout repository
@@ -27,8 +27,8 @@ jobs:
       # Step 3: Install Java JDK (Java 17 for compatibility)
       - name: Install Java JDK
         run: |
-          sudo apt update
-          sudo apt install -y openjdk-17-jdk
+          apt update
+          apt install -y openjdk-17-jdk
 
       # Step 4: Set up Android SDK
       - name: Set up Android SDK
@@ -57,8 +57,8 @@ jobs:
       # Step 6: Install Buildozer and dependencies
       - name: Install Buildozer and dependencies
         run: |
-          sudo apt update
-          sudo apt install -y python3-pip python3-venv libffi-dev libssl-dev zlib1g-dev
+          apt update
+          apt install -y python3-pip python3-venv libffi-dev libssl-dev zlib1g-dev
           pip install --upgrade pip
           pip install buildozer cython
           pip install python-for-android
